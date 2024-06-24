@@ -55,9 +55,8 @@ def evaluate(
 
 
 if __name__ == "__main__":
-    from huggingface_hub import hf_hub_download
-
     from cleanrl.c51_jax import QNetwork, make_env
+    from huggingface_hub import hf_hub_download
 
     model_path = hf_hub_download(repo_id="cleanrl/CartPole-v1-c51_jax-seed1", filename="c51_jax.cleanrl_model")
     evaluate(

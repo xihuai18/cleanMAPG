@@ -212,8 +212,12 @@ E.g., `torchrun --standalone --nnodes=1 --nproc_per_node=2 ppo_atari_multigpu.py
     torch.backends.cudnn.deterministic = args.torch_deterministic
 
     if len(args.device_ids) > 0:
-        assert len(args.device_ids) == args.world_size, "you must specify the same number of device ids as `--nproc_per_node`"
-        device = torch.device(f"cuda:{args.device_ids[local_rank]}" if torch.cuda.is_available() and args.cuda else "cpu")
+        assert (
+            len(args.device_ids) == args.world_size
+        ), "you must specify the same number of device ids as `--nproc_per_node`"
+        device = torch.device(
+            f"cuda:{args.device_ids[local_rank]}" if torch.cuda.is_available() and args.cuda else "cpu"
+        )
     else:
         device_count = torch.cuda.device_count()
         if device_count < args.world_size:

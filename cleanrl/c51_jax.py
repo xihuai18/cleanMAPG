@@ -227,7 +227,9 @@ poetry run pip install "stable_baselines3==2.0.0a1"
     obs, _ = envs.reset(seed=args.seed)
     for global_step in range(args.total_timesteps):
         # ALGO LOGIC: put action logic here
-        epsilon = linear_schedule(args.start_e, args.end_e, args.exploration_fraction * args.total_timesteps, global_step)
+        epsilon = linear_schedule(
+            args.start_e, args.end_e, args.exploration_fraction * args.total_timesteps, global_step
+        )
         if random.random() < epsilon:
             actions = np.array([envs.single_action_space.sample() for _ in range(envs.num_envs)])
         else:
@@ -277,7 +279,9 @@ poetry run pip install "stable_baselines3==2.0.0a1"
 
             # update target network
             if global_step % args.target_network_frequency == 0:
-                q_state = q_state.replace(target_params=optax.incremental_update(q_state.params, q_state.target_params, 1))
+                q_state = q_state.replace(
+                    target_params=optax.incremental_update(q_state.params, q_state.target_params, 1)
+                )
 
     if args.save_model:
         model_path = f"runs/{run_name}/{args.exp_name}.cleanrl_model"

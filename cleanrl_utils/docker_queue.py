@@ -13,7 +13,6 @@ At the moment, nvidia-container-toolkit still includes nvidia-container-runtime.
 Then restart the docker service (sudo systemctl restart docker) and use runtime="nvidia" in docker-py as before.
 """
 
-
 import argparse
 import shlex
 import time
@@ -78,7 +77,9 @@ while len(tasks) != 0:
         #         detach=True)
         #     running_containers += [[c, vcpu]]
         # else:
-        c = client.containers.run(image=task[0], environment=task[1], command=task[2], cpuset_cpus=str(vcpu), detach=True)
+        c = client.containers.run(
+            image=task[0], environment=task[1], command=task[2], cpuset_cpus=str(vcpu), detach=True
+        )
         running_containers += [[c, vcpu]]
         print("========================")
         print(f"remaining tasks={len(tasks)}, running containers={len(running_containers)}")

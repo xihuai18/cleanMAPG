@@ -17,17 +17,25 @@ mpl.rcParams["text.latex.preamble"] = r"\usepackage{amsmath}"  # for \text comma
 parser = argparse.ArgumentParser(description="CleanRL Plots")
 # Common arguments
 parser.add_argument(
-    "--wandb-project", type=str, default="cleanrl/cleanrl.benchmark", help="the name of wandb project (e.g. cleanrl/cleanrl)"
+    "--wandb-project",
+    type=str,
+    default="cleanrl/cleanrl.benchmark",
+    help="the name of wandb project (e.g. cleanrl/cleanrl)",
 )
 parser.add_argument(
-    "--feature-of-interest", type=str, default="charts/episodic_return", help="which feature to be plotted on the y-axis"
+    "--feature-of-interest",
+    type=str,
+    default="charts/episodic_return",
+    help="which feature to be plotted on the y-axis",
 )
 parser.add_argument("--hyper-params-tuned", nargs="+", default=[], help="the hyper parameters tuned")
 # parser.add_argument('--scan-history', type=lambda x:bool(strtobool(x)), default=False, nargs='?', const=True,
 #                     help='if toggled, cuda will not be enabled by default')
 parser.add_argument("--interested-exp-names", nargs="+", default=[], help="the hyper parameters tuned")
 parser.add_argument("--samples", type=int, default=500, help="the sampled point of the run")
-parser.add_argument("--smooth-weight", type=float, default=0.90, help="the weight parameter of the exponential moving average")
+parser.add_argument(
+    "--smooth-weight", type=float, default=0.90, help="the weight parameter of the exponential moving average"
+)
 parser.add_argument(
     "--last-n-episodes",
     type=int,
@@ -113,6 +121,7 @@ all_df = pd.concat([name_df, config_df, summary_df], axis=1)
 with open(f"{feature_name}/cache.pkl", "wb") as handle:
     pickle.dump([summary_list, config_list, name_list, envs, exp_names, ids], handle, protocol=pickle.HIGHEST_PROTOCOL)
 print("data loaded")
+
 
 # https://stackoverflow.com/questions/42281844/what-is-the-mathematics-behind-the-smoothing-parameter-in-tensorboards-scalar#_=_
 def smooth(scalars, weight):  # Weight between 0 and 1

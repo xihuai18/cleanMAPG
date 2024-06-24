@@ -12,6 +12,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import tyro
+from cleanrl.dqn_atari import QNetwork as TeacherModel
+from cleanrl_utils.evals.dqn_eval import evaluate
 from huggingface_hub import hf_hub_download
 from rich.progress import track
 from stable_baselines3.common.atari_wrappers import (
@@ -23,9 +25,6 @@ from stable_baselines3.common.atari_wrappers import (
 )
 from stable_baselines3.common.buffers import ReplayBuffer
 from torch.utils.tensorboard import SummaryWriter
-
-from cleanrl.dqn_atari import QNetwork as TeacherModel
-from cleanrl_utils.evals.dqn_eval import evaluate
 
 
 @dataclass
@@ -143,7 +142,9 @@ class ConvSequence(nn.Module):
         super().__init__()
         self._input_shape = input_shape
         self._out_channels = out_channels
-        self.conv = nn.Conv2d(in_channels=self._input_shape[0], out_channels=self._out_channels, kernel_size=3, padding=1)
+        self.conv = nn.Conv2d(
+            in_channels=self._input_shape[0], out_channels=self._out_channels, kernel_size=3, padding=1
+        )
         self.res_block0 = ResidualBlock(self._out_channels)
         self.res_block1 = ResidualBlock(self._out_channels)
 
@@ -191,7 +192,9 @@ def linear_schedule(start_e: float, end_e: float, duration: int, t: int):
 
 def kl_divergence_with_logits(target_logits, prediction_logits):
     """Implementation of on-policy distillation loss."""
-    out = -F.softmax(target_logits, dim=-1) * (F.log_softmax(prediction_logits, dim=-1) - F.log_softmax(target_logits, dim=-1))
+    out = -F.softmax(target_logits, dim=-1) * (
+        F.log_softmax(prediction_logits, dim=-1) - F.log_softmax(target_logits, dim=-1)
+    )
     return torch.sum(out)
 
 
@@ -321,7 +324,9 @@ poetry run pip install "stable_baselines3==2.0.0a1" "gymnasium[atari,accept-rom-
         # update the target network
         if global_step % args.target_network_frequency == 0:
             for target_network_param, q_network_param in zip(target_network.parameters(), q_network.parameters()):
-                target_network_param.data.copy_(args.tau * q_network_param.data + (1.0 - args.tau) * target_network_param.data)
+                target_network_param.data.copy_(
+                    args.tau * q_network_param.data + (1.0 - args.tau) * target_network_param.data
+                )
 
         if global_step % 100 == 0:
             writer.add_scalar("charts/offline/loss", loss, global_step)
@@ -367,7 +372,9 @@ poetry run pip install "stable_baselines3==2.0.0a1" "gymnasium[atari,accept-rom-
     for global_step in track(range(args.total_timesteps), description="online student training"):
         global_step += args.offline_steps
         # ALGO LOGIC: put action logic here
-        epsilon = linear_schedule(args.start_e, args.end_e, args.exploration_fraction * args.total_timesteps, global_step)
+        epsilon = linear_schedule(
+            args.start_e, args.end_e, args.exploration_fraction * args.total_timesteps, global_step
+        )
         if random.random() < epsilon:
             actions = np.array([envs.single_action_space.sample() for _ in range(envs.num_envs)])
         else:

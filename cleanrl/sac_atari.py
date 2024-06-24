@@ -290,7 +290,9 @@ poetry run pip install "stable_baselines3==2.0.0a1" "gymnasium[atari,accept-rom-
                     )
                     # adapt Q-target for discrete Q-function
                     min_qf_next_target = min_qf_next_target.sum(dim=1)
-                    next_q_value = data.rewards.flatten() + (1 - data.dones.flatten()) * args.gamma * (min_qf_next_target)
+                    next_q_value = data.rewards.flatten() + (1 - data.dones.flatten()) * args.gamma * (
+                        min_qf_next_target
+                    )
 
                 # use Q-values only for the taken actions
                 qf1_values = qf1(data.observations)
@@ -320,7 +322,9 @@ poetry run pip install "stable_baselines3==2.0.0a1" "gymnasium[atari,accept-rom-
 
                 if args.autotune:
                     # re-use action probabilities for temperature loss
-                    alpha_loss = (action_probs.detach() * (-log_alpha.exp() * (log_pi + target_entropy).detach())).mean()
+                    alpha_loss = (
+                        action_probs.detach() * (-log_alpha.exp() * (log_pi + target_entropy).detach())
+                    ).mean()
 
                     a_optimizer.zero_grad()
                     alpha_loss.backward()

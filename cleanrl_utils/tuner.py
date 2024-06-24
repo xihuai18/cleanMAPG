@@ -95,7 +95,8 @@ class Tuner:
                     ea = event_accumulator.EventAccumulator(f"runs/{experiment['run_name']}")
                     ea.Reload()
                     metric_values = [
-                        scalar_event.value for scalar_event in ea.Scalars(self.metric)[-self.metric_last_n_average_window :]
+                        scalar_event.value
+                        for scalar_event in ea.Scalars(self.metric)[-self.metric_last_n_average_window :]
                     ]
                     print(
                         f"The average episodic return on {env_id} is {np.average(metric_values)} averaged over the last {self.metric_last_n_average_window} episodes."
@@ -112,7 +113,9 @@ class Tuner:
 
                 normalized_scoress += [normalized_scores]
                 aggregated_normalized_score = self.aggregation_fn(normalized_scores)
-                print(f"The {self.aggregation_type} normalized score is {aggregated_normalized_score} with num_seeds={seed}")
+                print(
+                    f"The {self.aggregation_type} normalized score is {aggregated_normalized_score} with num_seeds={seed}"
+                )
                 trial.report(aggregated_normalized_score, step=seed)
                 if run:
                     run.log({"aggregated_normalized_score": aggregated_normalized_score})

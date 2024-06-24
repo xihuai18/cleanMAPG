@@ -23,7 +23,9 @@ parser.add_argument(
     default="charts/episodic_return/ProduceCombatUnitRewardFunction",
     help="which feature to be plotted on the y-axis",
 )
-parser.add_argument("--hyper-params-tuned", nargs="+", default=["shift", "adaptation"], help="the hyper parameters tuned")
+parser.add_argument(
+    "--hyper-params-tuned", nargs="+", default=["shift", "adaptation"], help="the hyper parameters tuned"
+)
 # parser.add_argument('--scan-history', type=lambda x:bool(strtobool(x)), default=False, nargs='?', const=True,
 #                     help='if toggled, cuda will not be enabled by default')
 parser.add_argument(
@@ -36,7 +38,9 @@ parser.add_argument(
     help="the hyper parameters tuned",
 )
 parser.add_argument("--samples", type=int, default=500, help="the sampled point of the run")
-parser.add_argument("--smooth-weight", type=float, default=0.90, help="the weight parameter of the exponential moving average")
+parser.add_argument(
+    "--smooth-weight", type=float, default=0.90, help="the weight parameter of the exponential moving average"
+)
 parser.add_argument(
     "--last-n-episodes",
     type=int,
@@ -143,6 +147,7 @@ else:
     with open(f"{feature_name}/exp_names_cache.pkl", "rb") as handle:
         exp_names = pickle.load(handle)
 print("data loaded")
+
 
 # https://stackoverflow.com/questions/42281844/what-is-the-mathematics-behind-the-smoothing-parameter-in-tensorboards-scalar#_=_
 def smooth(scalars, weight):  # Weight between 0 and 1

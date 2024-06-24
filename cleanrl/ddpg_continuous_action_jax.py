@@ -194,7 +194,9 @@ poetry run pip install "stable_baselines3==2.0.0a1"
         rewards: np.ndarray,
         terminations: np.ndarray,
     ):
-        next_state_actions = (actor.apply(actor_state.target_params, next_observations)).clip(-1, 1)  # TODO: proper clip
+        next_state_actions = (actor.apply(actor_state.target_params, next_observations)).clip(
+            -1, 1
+        )  # TODO: proper clip
         qf1_next_target = qf.apply(qf1_state.target_params, next_observations, next_state_actions).reshape(-1)
         next_q_value = (rewards + (1 - terminations) * args.gamma * (qf1_next_target)).reshape(-1)
 
@@ -236,9 +238,9 @@ poetry run pip install "stable_baselines3==2.0.0a1"
             actions = actor.apply(actor_state.params, obs)
             actions = np.array(
                 [
-                    (jax.device_get(actions)[0] + np.random.normal(0, actor.action_scale * args.exploration_noise)[0]).clip(
-                        envs.single_action_space.low, envs.single_action_space.high
-                    )
+                    (
+                        jax.device_get(actions)[0] + np.random.normal(0, actor.action_scale * args.exploration_noise)[0]
+                    ).clip(envs.single_action_space.low, envs.single_action_space.high)
                 ]
             )
 

@@ -19,7 +19,10 @@ parser.add_argument("--run-state", type=str, default="crashed", help="the name o
 
 parser.add_argument("--job-queue", type=str, default="cleanrl", help="the name of the job queue")
 parser.add_argument(
-    "--wandb-key", type=str, default="", help="the wandb key. If not provided, the script will try to read from `~/.netrc`"
+    "--wandb-key",
+    type=str,
+    default="",
+    help="the wandb key. If not provided, the script will try to read from `~/.netrc`",
 )
 parser.add_argument("--docker-repo", type=str, default="vwxyzjn/gym-microrts:latest", help="the name of the job queue")
 parser.add_argument("--job-definition", type=str, default="gym-microrts", help="the name of the job definition")

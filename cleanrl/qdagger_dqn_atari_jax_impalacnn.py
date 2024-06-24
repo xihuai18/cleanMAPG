@@ -6,9 +6,9 @@ from collections import deque
 from dataclasses import dataclass
 from typing import Sequence
 
-os.environ[
-    "XLA_PYTHON_CLIENT_MEM_FRACTION"
-] = "0.7"  # see https://github.com/google/jax/discussions/6332#discussioncomment-1279991
+os.environ["XLA_PYTHON_CLIENT_MEM_FRACTION"] = (
+    "0.7"  # see https://github.com/google/jax/discussions/6332#discussioncomment-1279991
+)
 
 import flax
 import flax.linen as nn
@@ -18,6 +18,8 @@ import jax.numpy as jnp
 import numpy as np
 import optax
 import tyro
+from cleanrl.dqn_atari_jax import QNetwork as TeacherModel
+from cleanrl_utils.evals.dqn_jax_eval import evaluate
 from flax.training.train_state import TrainState
 from huggingface_hub import hf_hub_download
 from rich.progress import track
@@ -30,9 +32,6 @@ from stable_baselines3.common.atari_wrappers import (
 )
 from stable_baselines3.common.buffers import ReplayBuffer
 from torch.utils.tensorboard import SummaryWriter
-
-from cleanrl.dqn_atari_jax import QNetwork as TeacherModel
-from cleanrl_utils.evals.dqn_jax_eval import evaluate
 
 
 @dataclass
@@ -340,7 +339,9 @@ poetry run pip install "stable_baselines3==2.0.0a1" "gymnasium[atari,accept-rom-
 
         # update the target network
         if global_step % args.target_network_frequency == 0:
-            q_state = q_state.replace(target_params=optax.incremental_update(q_state.params, q_state.target_params, args.tau))
+            q_state = q_state.replace(
+                target_params=optax.incremental_update(q_state.params, q_state.target_params, args.tau)
+            )
 
         if global_step % 100 == 0:
             writer.add_scalar("charts/offline/loss", jax.device_get(loss), global_step)
@@ -386,7 +387,9 @@ poetry run pip install "stable_baselines3==2.0.0a1" "gymnasium[atari,accept-rom-
     for global_step in track(range(args.total_timesteps), description="online student training"):
         global_step += args.offline_steps
         # ALGO LOGIC: put action logic here
-        epsilon = linear_schedule(args.start_e, args.end_e, args.exploration_fraction * args.total_timesteps, global_step)
+        epsilon = linear_schedule(
+            args.start_e, args.end_e, args.exploration_fraction * args.total_timesteps, global_step
+        )
         if random.random() < epsilon:
             actions = np.array([envs.single_action_space.sample() for _ in range(envs.num_envs)])
         else:

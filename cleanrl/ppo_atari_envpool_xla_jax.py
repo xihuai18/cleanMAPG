@@ -228,10 +228,14 @@ if __name__ == "__main__":
             episode_lengths=(new_episode_length) * (1 - info["terminated"]) * (1 - info["TimeLimit.truncated"]),
             # only update the `returned_episode_returns` if the episode is done
             returned_episode_returns=jnp.where(
-                info["terminated"] + info["TimeLimit.truncated"], new_episode_return, episode_stats.returned_episode_returns
+                info["terminated"] + info["TimeLimit.truncated"],
+                new_episode_return,
+                episode_stats.returned_episode_returns,
             ),
             returned_episode_lengths=jnp.where(
-                info["terminated"] + info["TimeLimit.truncated"], new_episode_length, episode_stats.returned_episode_lengths
+                info["terminated"] + info["TimeLimit.truncated"],
+                new_episode_length,
+                episode_stats.returned_episode_lengths,
             ),
         )
         return episode_stats, handle, (next_obs, reward, next_done, info)
@@ -436,7 +440,9 @@ if __name__ == "__main__":
         writer.add_scalar(
             "charts/avg_episodic_length", np.mean(jax.device_get(episode_stats.returned_episode_lengths)), global_step
         )
-        writer.add_scalar("charts/learning_rate", agent_state.opt_state[1].hyperparams["learning_rate"].item(), global_step)
+        writer.add_scalar(
+            "charts/learning_rate", agent_state.opt_state[1].hyperparams["learning_rate"].item(), global_step
+        )
         writer.add_scalar("losses/value_loss", v_loss.item(), global_step)
         writer.add_scalar("losses/policy_loss", pg_loss.item(), global_step)
         writer.add_scalar("losses/entropy", entropy_loss.item(), global_step)

@@ -29,8 +29,12 @@ def evaluate(
     key = jax.random.PRNGKey(seed)
     key, network_key, actor_key, critic_key = jax.random.split(key, 4)
     network_params = network.init(network_key, np.array([envs.single_observation_space.sample()]))
-    actor_params = actor.init(actor_key, network.apply(network_params, np.array([envs.single_observation_space.sample()])))
-    critic_params = critic.init(critic_key, network.apply(network_params, np.array([envs.single_observation_space.sample()])))
+    actor_params = actor.init(
+        actor_key, network.apply(network_params, np.array([envs.single_observation_space.sample()]))
+    )
+    critic_params = critic.init(
+        critic_key, network.apply(network_params, np.array([envs.single_observation_space.sample()]))
+    )
     # note: critic_params is not used in this script
     with open(model_path, "rb") as f:
         (args, (network_params, actor_params, critic_params)) = flax.serialization.from_bytes(
@@ -86,12 +90,12 @@ def evaluate(
 
 
 if __name__ == "__main__":
+    from cleanrl.ppo_atari_envpool_xla_jax_scan import Actor, Critic, Network, make_env
     from huggingface_hub import hf_hub_download
 
-    from cleanrl.ppo_atari_envpool_xla_jax_scan import Actor, Critic, Network, make_env
-
     model_path = hf_hub_download(
-        repo_id="vwxyzjn/Pong-v5-ppo_atari_envpool_xla_jax_scan-seed1", filename="ppo_atari_envpool_xla_jax_scan.cleanrl_model"
+        repo_id="vwxyzjn/Pong-v5-ppo_atari_envpool_xla_jax_scan-seed1",
+        filename="ppo_atari_envpool_xla_jax_scan.cleanrl_model",
     )
     evaluate(
         model_path,
