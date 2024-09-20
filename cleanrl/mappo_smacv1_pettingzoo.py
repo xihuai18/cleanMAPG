@@ -11,10 +11,6 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import tyro
-from co_mas.vector import AsyncVectorParallelEnv
-from co_mas.wrappers import AutoResetParallelEnvWrapper
-from co_mas.wrappers.vector import AsyncAgentStateVectorParallelEnvWrapper
-from loguru import logger
 from smac_pettingzoo import smacv1_pettingzoo_v1
 from torch.distributions.categorical import Categorical
 from torch.utils.tensorboard import SummaryWriter
@@ -109,9 +105,10 @@ class Args:
 
 
 def make_env(env_id: str) -> callable:
-    """ 
+    """
     Create a function that will create a parallelenv pettingzoo environment
     """
+
     def thunk():
         env = smacv1_pettingzoo_v1.parallel_env(env_id, {})
         return env
@@ -120,7 +117,7 @@ def make_env(env_id: str) -> callable:
 
 
 def layer_init(layer: nn.Module, bias_const: float = 0.0) -> nn.Module:
-    """ 
+    """
     Initialize the layers with the orthogonal initialization
     """
     gain = nn.init.calculate_gain("relu")
@@ -130,7 +127,7 @@ def layer_init(layer: nn.Module, bias_const: float = 0.0) -> nn.Module:
 
 
 class MLPBase(nn.Module):
-    """ 
+    """
     The base class for the MLP network:
     ----------
     # Input Layer
@@ -145,6 +142,7 @@ class MLPBase(nn.Module):
     ReLU
     ----------
     """
+
     def __init__(self, input_size: int, hidden_size: int, num_layers: int):
         super().__init__()
         layers = []

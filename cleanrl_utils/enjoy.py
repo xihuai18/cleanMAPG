@@ -1,7 +1,8 @@
 import argparse
 
-from cleanrl_utils.evals import MODELS
 from huggingface_hub import hf_hub_download
+
+from cleanrl_utils.evals import MODELS
 
 
 def parse_args():
